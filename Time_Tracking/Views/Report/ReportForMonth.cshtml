@@ -1,0 +1,115 @@
+﻿@model List<User>
+@{ 
+    ViewBag.Title = "Отчеты за указанный месяц";
+}
+
+<h2>Отчеты пользователя за указанный месяц</h2>
+<div class="row">
+    <div class="col-12">
+        <div class="form-group">
+            <label>Выберите пользователя:</label>
+            @Html.DropDownList("userId", new SelectList(Model, "Id", "Email"), new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <label>Выберите месяц</label>
+            <select class="form-control" name="numberMonth" id="numberMonth">
+                <option value="1">Январь</option>
+                <option value="2">Февраль</option>
+                <option value="3">Март</option>
+                <option value="4">Апрель</option>
+                <option value="5">Май</option>
+                <option value="6">Июнь</option>
+                <option value="7">Июль</option>
+                <option value="8">Август</option>
+                <option value="9">Сентябрь</option>
+                <option value="10">Октябрь</option>
+                <option value="11">Ноябрь</option>
+                <option value="12">Декабрь</option>
+            </select>
+        </div>
+        <input type="submit" id="search" value="Выбрать" class="btn btn-primary mb-1" />
+        <a href="/User/Index" class="btn btn-primary ml-1 mb-1">Назад</a>
+    </div>
+</div>
+
+<div class="row">
+    <div class="table-responsive">
+        <table class="table" id="table">
+            <thead>
+                <tr>
+                    <th>Комментарий</th>
+                    <th>Количество часов</th>
+                    <th>Дата</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">Footer</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script>
+
+    async function GetReports(url) {
+
+        let response = await fetch(url);
+        let usersJson = await response.json();
+
+        return usersJson;
+
+    }
+
+    function getUrl() {
+        return `/Report/GetReportsForMonthAndUser?userId=${getUserId()}&numberMonth=${getMonthId()}`;
+    }
+
+    function getUserId() {
+        let usersSelect = document.getElementById("userId");
+        return usersSelect.options[usersSelect.selectedIndex].getAttribute("value");
+    }
+
+    function getMonthId() {
+        let monthSelect = document.getElementById("numberMonth");
+        return monthSelect.options[monthSelect.selectedIndex].getAttribute("value");
+    }
+
+    function clearTable() {
+        let tBody = document.getElementsByTagName('tbody')[0];
+        let childrenTBody = tBody.children;
+        tBody.remove(childrenTBody);
+    }
+
+    function fillTable(users) {
+        let keys = ["comment", "quantityOfHours", "date"];
+        let tbody = document.createElement("tbody");
+
+        [].forEach.call(users, (element) => {
+            let tr = document.createElement("tr");
+
+            for (let key in element) {
+                if (keys.indexOf(key, 0) != -1) {
+                    let td = document.createElement("td");
+                    td.append(document.createTextNode(element[key]))
+                    tr.append(td);
+                }
+            }
+            tbody.append(tr);
+
+        });
+
+        document.getElementsByTagName("table")[0].append(tbody);
+    }
+
+    document.getElementById("search").onclick = async function (event) {
+        let usersJson = await GetReports(getUrl());
+        clearTable();
+        fillTable(usersJson);
+    }
+
+</script>

@@ -1,0 +1,115 @@
+﻿@model IndexModelUserPerson
+@{
+    ViewBag.Title = "Пользователи";
+}
+
+<h2 class="text-center">Список пользователей</h2>
+<a href="/User/Create" class="btn btn-primary mb-1">Создать</a>
+<button type="button" id="modalBtn" class="btn btn-primary ml-1 mb-1">Отчеты</button>
+<a href="/Report/ReportForMonth" class="btn btn-primary ml-1 mb-1">Отчет за указанный месяц</a>
+<div class="row">
+    <div class="table-responsive">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>EMail</th>
+                    <th>Фамилия</th>
+                    <th>Имя</th>
+                    <th>Отчество</th>
+                    <th>Дополнительно</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (User user in Model.Users)
+                {
+                    <tr>
+                        <td>@user.Email</td>
+                        <td>@user.FName</td>
+                        <td>@user.MName</td>
+                        <td>@user.LName</td>
+                        <td>
+                            @Html.ActionLink("Редактировать", "Edit", "User", new { id = user.Id })
+                            |
+                            @Html.ActionLink("Удалить", "Delete", "User", new { id = user.Id })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr><td colspan="5">Footer</td></tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<div class="row">
+    <div class="modal modalSettings col-12" id="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Отчеты</h5>
+                    <button type="button" class="close" data-close="close">
+                        <span>&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <a href="/Report/Create" class="btn btn-primary mb-1">Добавить отчет</a>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <tr>
+                                <th>Email</th>
+                                <th>Комментарий</th>
+                                <th>Количество часов</th>
+                                <th>Дата</th>
+                                <th>Дополнительно</th>
+                            </tr>
+                            @foreach (Report report in Model.Reports)
+                            {
+                                <tr>
+                                    <td>@report.User?.Email</td>
+                                    <td>@report.Comment</td>
+                                    <td>@report.QuantityOfHours</td>
+                                    <td>@report.Date</td>
+                                    <td>
+                                        <a href="/Report/Edit?id=@report.Id">Редактировать</a>
+                                        |
+                                        <a href="/Report/Delete?id=@report.Id">Удалить</a>
+                                    </td>
+                                </tr>
+                            }
+                        </table>
+                    </div>                   
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-close="close" data-dismiss="modal">Закрыть</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function Initialize() {
+        let modal = document.getElementById('modal');
+        let shadowDiv = document.getElementById('shadow');
+
+        document.getElementById('modalBtn').onclick = function (event) {
+            modal.classList.add('shown.bs.modal');       
+            modal.classList.remove('modal');
+            shadowDiv.classList.add('popup-fade');
+        };
+
+        document.querySelectorAll('[data-close="close"]').forEach((element) => {
+            element.onclick = CloseModal;
+        });
+
+        function CloseModal (event) {
+            modal.classList.add('modal');
+            modal.classList.remove('shown.bs.modal');
+            shadowDiv.classList.remove('popup-fade');
+        }
+    }
+
+    Initialize();
+
+</script>

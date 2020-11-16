@@ -1,0 +1,28 @@
+﻿@model Report
+@{
+    ViewBag.Title = "Удалить отчет";
+}
+
+<h2 class="text-center">Удаление пользователя</h2>
+<hr />
+<div>
+    <dl class="row">
+        <dt class="col-2">Email</dt>
+        <dd class="col-10">@Html.DisplayFor(x => x.Comment)</dd>
+
+        <dt class="col-2">Фамилия</dt>
+        <dd class="col-10">@Html.DisplayFor(x => x.QuantityOfHours)</dd>
+
+        <dt class="col-2">Имя</dt>
+        <dd class="col-10">@Html.DisplayFor(x => x.Date)</dd>
+
+    </dl>
+    <div class="row">
+        <form asp-controller="Report" asp-action="Delete" asp-route-id="@Model.Id" method="post">
+            <div class="form-group">
+                <input type="submit" class="btn btn-danger" value="Удалить" />
+                <a href="/User/Index" class="btn btn-primary">Назад</a>
+            </div>
+        </form>
+    </div>
+</div>
